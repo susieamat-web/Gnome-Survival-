@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Gnome & Diamonds</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050510; font-family: 'Segoe UI', sans-serif; touch-action: none; }
+        canvas { display: block; }
+        #ui { 
+            position: absolute; top: 15px; left: 15px; color: white; 
+            font-size: 14px; font-weight: bold; pointer-events: none; z-index: 10;
+        }
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.85); color: white; text-align: center; z-index: 20;
+        }
+        button {
+            padding: 15px 40px; font-size: 20px; cursor: pointer; border: none;
+            background: #00d2ff; color: black; font-weight: bold; border-radius: 50px;
+            box-shadow: 0 0 20px #00d2ff; margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        LEVEL: <span id="lvl">1</span> | SCORE: <span id="scr">0</span> | BEST: <span id="hscr">0</span><br>
+        LIVES: <span id="hrt">❤️❤️❤️</span>
+    </div>
+    
+    <div id="menu" class="overlay">
+        <h1 id="title" style="color:#00d2ff; text-shadow: 0 0 10px #00d2ff;">GNOME & DIAMONDS</h1>
+        <p id="info">Slide to move • Avoid Mushrooms • Catch Diamonds!</p>
+        <button onclick="start()">START QUEST</button>
+    </div>
+
+    <canvas id="c"></canvas>
+
+<script>
+const canvas = document.getElementById("c"), ctx = canvas.getContext("2d");
+let l=1, s=0, lives=3, active=false, lastY=0;
+let highscore = localStorage.getItem("gnomeSlideHighscore") || 0;
+
+// Kleurenpalet voor de muts per level
+const hatColors = ["#00d2ff", "#3aef3a", "#ffff00", "#ff00ff", "#ff4b2b", "#ffffff", "#7000ff", "#00ffcc", "#ff8800", "#ff0000",
+                    "#00d2ff", "#3aef3a", "#ffff00", "#ff00ff", "#ff4b2b", "#ffffff", "#7000ff", "#00ffcc", "#ff8800", "#ff0000"];
+
+const player = { x: 50, y: 0, w: 30, h: 45 }; 
+let enemies = [], gems = [];
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    player.y = canvas.height / 2;
+}
+window.onresize = resize; resize();
+document.getElementById("hscr").innerText = highscore;
+
+window.addEventListener('touchstart', e => { lastY = e.touches[0].clientY; });
+window.addEventListener('touchmove', e => {
+    if(!active) return;
+    e.preventDefault();
+    let deltaY = e.touches[0].clientY - lastY;
+    player.y += deltaY;
+    lastY = e.touches[0].clientY;
+    if (player.y < 20) player.y = 20;
+    if (player.y > canvas.height - 50) player.y = canvas.height - 50;
+}, {passive: false});
+
+function drawGnome(x, y, color) {
+    ctx.shadowBlur = 15; ctx.shadowColor = color;
+    // Muts
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y);
+    ctx.lineTo(x, y + 25);
+    ctx.lineTo(x + 30, y + 25);
+    ctx.fill();
+    // Gezicht
+    ctx.fillStyle = "#ffdbac";
+    ctx.fillRect(x + 5, y + 25, 20, 10);
+    // Baard
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.moveTo(x + 5, y + 30);
+    ctx.lineTo(x + 25, y + 30);
+    ctx.lineTo(x + 15, y + 45);
+    ctx.fill();
+}
+
+function drawMushroom(x, y, color) {
+    ctx.shadowBlur = 15; ctx.shadowColor = color;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(x + 12, y + 15, 6, 15);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x + 15, y + 15, 15, Math.PI, 0);
+    ctx.fill();
+}
+
+function drawDiamond(x, y) {
+    ctx.shadowBlur = 20; ctx.shadowColor = "#00ffff";
+    ctx.fillStyle = "#00ffff";
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y);     // Boven
+    ctx.lineTo(x + 25, y + 12); // Rechts midden
+    ctx.lineTo(x + 15, y + 25); // Onder
+    ctx.lineTo(x + 5, y + 12);  // Links midden
+    ctx.closePath();
+    ctx.fill();
+}
+
+function start() {
+    l=1; s=0; lives=3; active=true; enemies=[]; gems=[];
+    document.getElementById("menu").style.display = "none";
+    updateUI();
+    for(let i=0; i<4; i++) spawnEnemy();
+    loop();
+}
+
+function spawnEnemy() {
+    enemies.push({ x: canvas.width + Math.random()*400, y: Math.random()*(canvas.height-40), w: 30, h: 30, v: 3 + (l * 0.6) });
+}
+
+function spawnGem() {
+    if(Math.random() < 0.01) 
+        gems.push({ x: canvas.width, y: Math.random()*(canvas.height-30), w: 30, h: 30 });
+}
+
+function updateUI() {
+    document.getElementById("lvl").innerText = l;
+    document.getElementById("scr").innerText = s;
+    document.getElementById("hrt").innerText = "❤️".repeat(lives);
+    document.getElementById("hscr").innerText = highscore;
+}
+
+function loop() {
+    if(!active) return;
+    ctx.fillStyle = "#050510"; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Teken Gnome met kleur van huidige level
+    drawGnome(player.x, player.y, hatColors[l-1]);
+
+    // Rode Paddestoelen
+    enemies.forEach((en, i) => {
+        en.x -= en.v;
+        drawMushroom(en.x, en.y, "#ff2d55");
+        if(en.x < -40) {
+            en.x = canvas.width + 100; en.y = Math.random()*(canvas.height-40);
+            s++; updateUI();
+            if(s % 20 === 0 && l < 20) l++; 
+        }
+        if(player.x < en.x+en.w && player.x+player.w > en.x && player.y < en.y+en.h && player.y+player.h > en.y) {
+            lives--; updateUI();
+            en.x = -200; 
+            if(lives <= 0) { 
+                active = false; 
+                if (s > highscore) { highscore = s; localStorage.setItem("gnomeSlideHighscore", highscore); }
+                document.getElementById("title").innerText = s >= highscore ? "NEW RECORD!" : "QUEST ENDED";
+                document.getElementById("info").innerText = "Gnome Score: " + s;
+                document.getElementById("menu").style.display="flex"; 
+            }
+        }
+    });
+
+    // Diamanten
+    spawnGem();
+    gems.forEach((gem, i) => {
+        gem.x -= 4;
+        drawDiamond(gem.x, gem.y);
+        if(player.x < gem.x+gem.w && player.x+player.w > gem.x && player.y < gem.y+gem.h && player.y+player.h > gem.y) {
+            s += 100; updateUI(); gems.splice(i, 1);
+        }
+    });
+    
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
