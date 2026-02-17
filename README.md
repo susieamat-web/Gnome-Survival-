@@ -7,7 +7,7 @@ Welcome to **Gnome & Diamonds**, a vibrant neon-style arcade game built for mobi
 ## 🚀 Play Now
 
 Start your quest here:
-👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/My-first-game-/)**
+👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/Gnome-adventure/)**
 
 ---
 
@@ -29,18 +29,12 @@ Start your quest here:
 * **Desktop:** Use your mouse to drag the gnome vertically.
 * **Goal:** Survive as long as possible! The forest gets faster and more dangerous as you progress.
 
-### Scoring
-* **Passing a Mushroom:** +1 point
-* **Collecting a Diamond:** +100 points
-* **Level Up:** Every 20 points, the speed increases and your hat changes color!
-
 ---
 
 ## 🛠️ Technical Setup
 * **HTML5 Canvas:** All graphics (Gnome, Mushrooms, Diamonds) are custom-drawn using code.
-* **LocalStorage:** Used to keep track of your highscore without needing a database.
-* **Delta Movement:** Advanced touch logic for a lag-free experience.
+* **LocalStorage:** Your highscore is saved locally in your browser.
+* **Responsive Design:** Optimized for all screen sizes.
 
 ---
 *Created with ❤️ by [susieamat-web](https://github.com/susieamat-web)*
-
