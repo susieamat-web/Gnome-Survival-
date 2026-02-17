@@ -1,50 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gnome Survival Pro</title>
+    <title>Gnome Survival</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #050510; font-family: 'Segoe UI', sans-serif; touch-action: none; }
-        canvas { display: block; }
-        #ui { 
-            position: absolute; top: 15px; left: 15px; color: white; 
-            font-size: 14px; font-weight: bold; pointer-events: none; z-index: 10;
-        }
-        .overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.85); color: white; text-align: center; z-index: 20;
-        }
-        button {
-            padding: 15px 40px; font-size: 20px; cursor: pointer; border: none;
-            background: #00ff88; color: black; font-weight: bold; border-radius: 50px;
-            box-shadow: 0 0 20px #00ff88; margin-top: 20px;
-        }
+        body { margin: 0; background: #050510; color: white; font-family: sans-serif; overflow: hidden; touch-action: none; }
+        canvas { display: block; background: #000; }
+        #ui { position: absolute; top: 10px; left: 10px; z-index: 10; pointer-events: none; }
+        #menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); z-index: 20; }
+        button { padding: 20px 50px; font-size: 25px; background: #00ff88; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div id="ui">
-        LEVEL: <span id="lvl">1</span> | SCORE: <span id="scr">0</span> | BEST: <span id="hscr">0</span><br>
-        LIVES: <span id="hrt">❤️❤️❤️</span>
+    <div id="ui">SCORE: <span id="s">0</span> | LIVES: <span id="h">❤️❤️❤️</span></div>
+    <div id="menu">
+        <h1 style="color:#00ff88">GNOME SURVIVAL</h1>
+        <button id="btn">START GAME</button>
     </div>
-    
-    <div id="menu" class="overlay">
-        <h1 id="title" style="color:#00ff88; text-shadow: 0 0 10px #00ff88;">GNOME SURVIVAL</h1>
-        <p id="info">Slide Up/Down • Avoid Red Mushrooms • Get Diamonds</p>
-        <button id="startBtn">START QUEST</button>
-    </div>
-
     <canvas id="c"></canvas>
 
 <script>
 const canvas = document.getElementById("c"), ctx = canvas.getContext("2d");
-let l=1, s=0, lives=3, active=false, lastY=0;
-let highscore = localStorage.getItem("gnomeSurvivalHighscore") || 0;
-
-const hatColors = ["#00d2ff", "#3aef3a", "#ffff00", "#ff00ff", "#ff4b2b", "#ffffff", "#7000ff", "#00ffcc", "#ff8800", "#ff0000"];
-const player = { x: 50, y: 0, w: 30, h: 45 }; 
-let enemies = [], gems = [];
+let score = 0, lives = 3, active = false, lastY = 0;
+const player = { x: 50, y: 100, w: 30, h: 45 };
+let enemies = [];
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -52,98 +31,62 @@ function resize() {
     player.y = canvas.height / 2;
 }
 window.onresize = resize; resize();
-document.getElementById("hscr").innerText = highscore;
 
-// Bediening
+// Input
 window.addEventListener('touchstart', e => { lastY = e.touches[0].clientY; });
 window.addEventListener('touchmove', e => {
     if(!active) return;
     e.preventDefault();
-    let deltaY = e.touches[0].clientY - lastY;
-    player.y += deltaY;
+    player.y += (e.touches[0].clientY - lastY);
     lastY = e.touches[0].clientY;
-    if (player.y < 10) player.y = 10;
-    if (player.y > canvas.height - 50) player.y = canvas.height - 50;
 }, {passive: false});
 
-function drawGnome(x, y, color) {
-    ctx.shadowBlur = 15; ctx.shadowColor = color;
-    ctx.fillStyle = color;
-    ctx.beginPath(); ctx.moveTo(x+15, y); ctx.lineTo(x, y+25); ctx.lineTo(x+30, y+25); ctx.fill();
-    ctx.fillStyle = "#ffdbac"; ctx.fillRect(x+5, y+25, 20, 10);
-    ctx.fillStyle = "white";
-    ctx.beginPath(); ctx.moveTo(x+5, y+30); ctx.lineTo(x+25, y+30); ctx.lineTo(x+15, y+45); ctx.fill();
-}
-
-function drawMushroom(x, y, color) {
-    ctx.shadowBlur = 15; ctx.shadowColor = color;
-    ctx.fillStyle = "#fff"; ctx.fillRect(x+12, y+15, 6, 15);
-    ctx.fillStyle = color;
-    ctx.beginPath(); ctx.arc(x+15, y+15, 15, Math.PI, 0); ctx.fill();
-}
-
-function drawDiamond(x, y) {
-    ctx.shadowBlur = 20; ctx.shadowColor = "#00ffff";
-    ctx.fillStyle = "#00ffff";
-    ctx.beginPath();
-    ctx.moveTo(x+15, y); ctx.lineTo(x+25, y+12); ctx.lineTo(x+15, y+25); ctx.lineTo(x+5, y+12);
-    ctx.closePath(); ctx.fill();
-}
-
-function spawnEnemy() {
-    enemies.push({ x: canvas.width + Math.random()*500, y: Math.random()*(canvas.height-50), w: 30, h: 30, v: 3 + (l * 0.5) });
-}
-
-function start() {
-    l=1; s=0; lives=3; active=true; enemies=[]; gems=[];
+// Start Function
+document.getElementById("btn").onclick = function() {
+    console.log("Game Starting...");
+    active = true;
+    score = 0;
+    lives = 3;
+    enemies = [];
     document.getElementById("menu").style.display = "none";
-    document.getElementById("lvl").innerText = l;
-    document.getElementById("scr").innerText = s;
-    document.getElementById("hrt").innerText = "❤️❤️❤️";
-    for(let i=0; i<4; i++) spawnEnemy();
-    requestAnimationFrame(loop);
-}
-
-document.getElementById("startBtn").addEventListener("click", start);
+    loop();
+};
 
 function loop() {
     if(!active) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#050510"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#050510";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    drawGnome(player.x, player.y, hatColors[(l-1)%10]);
+    // Draw Gnome (Simple version for testing)
+    ctx.fillStyle = "#00d2ff";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
 
+    // Enemies
+    if(Math.random() < 0.02) enemies.push({x: canvas.width, y: Math.random()*canvas.height, v: 5});
+    
     enemies.forEach((en, i) => {
         en.x -= en.v;
-        drawMushroom(en.x, en.y, "#ff2d55");
-        if(en.x < -40) {
-            en.x = canvas.width + Math.random()*200; en.y = Math.random()*(canvas.height-40);
-            s++; document.getElementById("scr").innerText = s;
-            if(s % 20 === 0 && l < 20) { l++; document.getElementById("lvl").innerText = l; }
-        }
-        if(player.x < en.x+en.w && player.x+player.w > en.x && player.y < en.y+en.h && player.y+player.h > en.y) {
-            lives--; document.getElementById("hrt").innerText = "❤️".repeat(lives);
-            en.x = -200; 
-            if(lives <= 0) { 
-                active = false; 
-                if (s > highscore) { highscore = s; localStorage.setItem("gnomeSurvivalHighscore", highscore); }
-                document.getElementById("title").innerText = "QUEST ENDED";
-                document.getElementById("info").innerText = "Score: " + s;
-                document.getElementById("menu").style.display="flex"; 
-                document.getElementById("hscr").innerText = highscore;
+        ctx.fillStyle = "red";
+        ctx.fillRect(en.x, en.y, 30, 30);
+
+        // Collision
+        if(player.x < en.x+30 && player.x+player.w > en.x && player.y < en.y+30 && player.y+player.h > en.y) {
+            lives--;
+            enemies.splice(i, 1);
+            document.getElementById("h").innerText = "❤️".repeat(lives);
+            if(lives <= 0) {
+                active = false;
+                document.getElementById("menu").style.display = "flex";
+                document.getElementById("btn").innerText = "RESTART";
             }
+        }
+        if(en.x < -50) { 
+            enemies.splice(i, 1); 
+            score++; 
+            document.getElementById("s").innerText = score; 
         }
     });
 
-    if(Math.random() < 0.005) gems.push({ x: canvas.width, y: Math.random()*(canvas.height-30), w: 30, h: 30 });
-    gems.forEach((gem, i) => {
-        gem.x -= 4;
-        drawDiamond(gem.x, gem.y);
-        if(player.x < gem.x+gem.w && player.x+player.w > gem.x && player.y < gem.y+gem.h && player.y+player.h > gem.y) {
-            s += 100; document.getElementById("scr").innerText = s; gems.splice(i, 1);
-        }
-    });
-    
     requestAnimationFrame(loop);
 }
 </script>
