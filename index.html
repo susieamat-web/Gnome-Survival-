@@ -44,13 +44,10 @@ window.addEventListener('touchmove', e => {
 }, {passive: false});
 
 function drawGnome(x, y) {
-    // Muts (Neon Blauw)
     ctx.shadowBlur = 15; ctx.shadowColor = "#00d2ff";
     ctx.fillStyle = "#00d2ff";
     ctx.beginPath(); ctx.moveTo(x+15, y); ctx.lineTo(x, y+25); ctx.lineTo(x+30, y+25); ctx.fill();
-    // Gezicht
     ctx.fillStyle = "#ffdbac"; ctx.fillRect(x+5, y+25, 20, 10);
-    // Baard (Wit)
     ctx.fillStyle = "white";
     ctx.beginPath(); ctx.moveTo(x+5, y+30); ctx.lineTo(x+25, y+30); ctx.lineTo(x+15, y+45); ctx.fill();
 }
@@ -71,6 +68,8 @@ function drawDiamond(x, y) {
 function start() {
     active = true; s = 0; lives = 3; enemies = []; gems = [];
     document.getElementById("menu").style.display = "none";
+    document.getElementById("scr").innerText = "0";
+    document.getElementById("hrt").innerText = "❤️❤️❤️";
     loop();
 }
 
@@ -91,9 +90,10 @@ function loop() {
             document.getElementById("hrt").innerText = "❤️".repeat(lives);
             if(lives<=0) { active=false; document.getElementById("menu").style.display="flex"; }
         }
+        if(en.x < -50) { enemies.splice(i,1); s++; document.getElementById("scr").innerText = s; }
     });
 
-    if(Math.random() < 0.005) gems.push({x:canvas.width, y:Math.random()*canvas.height});
+    if(Math.random() < 0.005) gems.push({x:canvas.width, y:Math.random()*(canvas.height-30)});
     gems.forEach((g, i) => {
         g.x -= 4; drawDiamond(g.x, g.y);
         if(player.x < g.x+30 && player.x+30 > g.x && player.y < g.y+30 && player.y+45 > g.y) {
