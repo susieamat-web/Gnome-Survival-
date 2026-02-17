@@ -1,45 +1,27 @@
-# 🍄 Gnome-Survival: Neon Adventure
+# 🍄 Gnome Survival
 
-![Gnome Survival Logo](logo.png)
+Welkom bij **Gnome Survival-**! Een neon-adventure waarin je een kabouter bestuurt, paddenstoelen ontwijkt en diamanten verzamelt.
 
-Welcome to **Gnome-Survival**! A fast-paced, neon-themed arcade game built for mobile and desktop. Navigate your gnome through a glowing forest, dodge toxic red mushrooms, and collect rare diamonds to become the ultimate survivor.
+## 🚀 Speel het Spel
 
-## 🚀 Play Now
-
-Experience the adventure directly in your browser:
-👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/Gnome-Survival-/)**
+Klik op de link hieronder om direct te spelen op je mobiel of pc:
+👉 **[SPEEL GNOME SURVIVAL](https://susieamat-web.github.io/Gnome-Survival-/)**
 
 ---
 
 ## ✨ Features
-
-* **🧙 Legendary Gnome:** You control a neon gnome. Watch out! His hat changes color every time you level up.
-* **💎 Diamond Rush:** Collect blue diamonds for a massive score boost of **+100 points**.
-* **🍄 Deadly Mushrooms:** Stay away from the red glowing mushrooms. You have 3 lives—don't waste them!
-* **📈 20 Levels of Difficulty:** The forest gets faster and more crowded as you progress. Can you reach Level 20?
-* **🏆 Local Highscore:** Your best score is saved on your device. Can you beat your own record?
-* **📱 Mobile Optimized:** Built with "Relative Touch Controls," meaning the gnome follows your finger movement anywhere on the screen.
+* **🧙 Neon Gnome:** Een kabouter met een muts die van kleur verandert per level!
+* **💎 Diamanten:** Pak de blauwe diamanten voor +100 punten.
+* **🍄 Paddenstoelen:** Pas op voor de rode gloeiende paddenstoelen.
+* **📱 Mobile First:** Schuif over je scherm om de kabouter te besturen.
 
 ---
 
-## 🕹️ How to Play
-
-### Controls
-* **Mobile:** Touch anywhere and **slide your finger up or down**. The gnome will mirror your movement.
-* **Desktop:** Click and drag with your mouse to move the gnome vertically.
-* **Objective:** Dodge red mushrooms to survive. Collect diamonds to reach higher scores faster!
-
-### Scoring
-* **Survival:** +1 point for every mushroom you pass.
-* **Diamonds:** +100 points per diamond.
-* **Leveling:** The game speeds up every 20 points!
+## 🕹️ Hoe speel je het?
+1. Open de link op je telefoon.
+2. Klik op **START QUEST**.
+3. Sleep je vinger omhoog en omlaag om de kabouter te bewegen.
+4. Hoe hoger je score, hoe sneller het spel gaat!
 
 ---
-
-## 🛠️ Technical Details
-* **Engine:** Pure JavaScript with HTML5 Canvas API.
-* **Persistence:** Uses `localStorage` to save your highscore without a backend.
-* **Graphics:** Procedurally drawn neon shapes for high performance and a 60FPS experience.
-
----
-*Created with ❤️ by [susieamat-web](https://github.com/susieamat-web)*
+*Gemaakt door [susieamat-web](https://github.com/susieamat-web)*
