@@ -7,7 +7,7 @@ Welcome to **Gnome-Survival**! A fast-paced, neon-themed arcade game built for m
 ## 🚀 Play Now
 
 Experience the adventure directly in your browser:
-👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/Gnome-Survival/)**
+👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/Gnome-Survival-/)**
 
 ---
 
