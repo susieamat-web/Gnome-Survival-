@@ -1,45 +1,46 @@
-# 🍄 Gnome & Diamonds: Neon Adventure
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gnome Adventure</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050510; font-family: 'Segoe UI', sans-serif; touch-action: none; }
+        canvas { display: block; }
+        #ui { 
+            position: absolute; top: 15px; left: 15px; color: white; 
+            font-size: 14px; font-weight: bold; pointer-events: none; z-index: 10;
+        }
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.85); color: white; text-align: center; z-index: 20;
+        }
+        button {
+            padding: 15px 40px; font-size: 20px; cursor: pointer; border: none;
+            background: #00ff88; color: black; font-weight: bold; border-radius: 50px;
+            box-shadow: 0 0 20px #00ff88; margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        LEVEL: <span id="lvl">1</span> | SCORE: <span id="scr">0</span> | BEST: <span id="hscr">0</span><br>
+        LIVES: <span id="hrt">❤️❤️❤️</span>
+    </div>
+    
+    <div id="menu" class="overlay">
+        <h1 id="title" style="color:#00ff88; text-shadow: 0 0 10px #00ff88;">GNOME & DIAMONDS</h1>
+        <p id="info">Slide to Move • Avoid Red Mushrooms • Get Diamonds!</p>
+        <button onclick="start()">START QUEST</button>
+    </div>
 
-![Gnome Adventure Logo](logo.png)
+    <canvas id="c"></canvas>
 
-Welcome to **Gnome & Diamonds**, a vibrant neon-style arcade game built for mobile browsers. Guide your gnome through a mystical forest, dodge dangerous mushrooms, and collect precious diamonds!
+<script>
+const canvas = document.getElementById("c"), ctx = canvas.getContext("2d");
+let l=1, s=0, lives=3, active=false, lastY=0;
+let highscore = localStorage.getItem("gnomeHighscore") || 0;
 
-## 🚀 Play Now
-
-Start your quest here:
-👉 **[CLICK HERE TO PLAY](https://susieamat-web.github.io/My-first-game-/)**
-
----
-
-## ✨ Features
-
-* **🧙 Neon Gnome:** A brave explorer with a **color-changing hat** that evolves every time you level up!
-* **💎 Shiny Diamonds:** Rare collectibles that boost your score by **+100 points**.
-* **🍄 Dangerous Mushrooms:** Avoid the red glowing fungi at all costs.
-* **❤️ Life System:** You start with 3 lives. Use them wisely to reach Level 20!
-* **🏆 Highscore:** Your personal best is saved on your device, so you can always try to beat your own record.
-* **📱 Pro Controls:** Smooth, relative touch-sliding designed specifically for mobile play.
-
----
-
-## 🕹️ How to Play
-
-### Controls
-* **Mobile:** Touch the screen and **slide your finger up or down**. The gnome will follow your movement precisely.
-* **Desktop:** Use your mouse to drag the gnome vertically.
-* **Goal:** Survive as long as possible! The forest gets faster and more dangerous as you progress.
-
-### Scoring
-* **Passing a Mushroom:** +1 point
-* **Collecting a Diamond:** +100 points
-* **Level Up:** Every 20 points, the speed increases and your hat changes color!
-
----
-
-## 🛠️ Technical Setup
-* **HTML5 Canvas:** All graphics (Gnome, Mushrooms, Diamonds) are custom-drawn using code.
-* **LocalStorage:** Used to keep track of your highscore without needing a database.
-* **Delta Movement:** Advanced touch logic for a lag-free experience.
-
----
-*Created with ❤️ by [susieamat-web](https://github.com/susieamat-web)*
+// De muts verandert per level van kleur!
+const hatColors = ["#00d2ff", "#3aef3a", "#ffff00", "#ff00ff", "#ff4b2b", "#ffffff", "#7000ff", "#00ffcc", "#ff
